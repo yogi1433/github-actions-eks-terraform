@@ -18,7 +18,7 @@ node_role_arn       = "aws_iam_role.node_group_role.arn"
 
 ###### tfvars for docker image ###########
 
-docker_image_name = "myweb-app5"
+docker_image_name = "myweb-app3"
 docker_image_tag = "latest"
 docker_file_path = "./"
 docker_hub_username = ""
