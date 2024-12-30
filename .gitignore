@@ -1,0 +1,8 @@
+.terraform*
+.outputs.tf.old
+1
+terraform.tfstate
+terraform.tfstate.backup
+vs-code.bat
+outputs.tf.old
+
