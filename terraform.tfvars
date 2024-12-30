@@ -6,7 +6,7 @@ environment         = "dev"
 project             = "arsaminor"
 owner               = "Latheef"
 instance_type       = "t2.micro"
-key                 = "jenkinserver"
+key                 = "eks-manager"
 instance_name       = "Managemnetnode"
 cluster_name        = "eks-latheef-cluster"
 instance_types      = ["t3.medium"]
@@ -20,7 +20,7 @@ node_role_arn       = "aws_iam_role.node_group_role.arn"
 
 docker_image_name = "myweb-app5"
 docker_image_tag = "latest"
-docker_file_path = "../../"
+docker_file_path = "./"
 docker_hub_username = ""
 docker_hub_password = ""
 
