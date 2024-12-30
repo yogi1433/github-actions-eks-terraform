@@ -123,8 +123,8 @@ module "docker_image" {
   docker_image_name       = var.docker_image_name
   docker_image_tag        = var.docker_image_tag
   docker_file_path = var.docker_file_path
-  # docker_hub_username = var.docker_hub_username
-  # docker_hub_password = var.docker_hub_password
+  docker_hub_username = var.docker_hub_username
+  docker_hub_password = var.docker_hub_password
 }
 
 module "docker_push" {

@@ -1,6 +1,6 @@
 # Use local-exec provisioner to push the Docker image to Docker Hub
 resource "null_resource" "push_to_docker_hub" {
- # depends_on = [docker_image.myweb_app]
+#  depends_on = [docker_image.myweb_app]
 
   provisioner "local-exec" {
     command = <<EOT

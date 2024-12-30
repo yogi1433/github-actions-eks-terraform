@@ -14,15 +14,15 @@ variable "docker_file_path" {
   type        = string
 }
 
-# variable "docker_hub_username" {
-#   description = "Your Docker Hub username"
-#   type        = string
-# }
+variable "docker_hub_username" {
+  description = "Your Docker Hub username"
+  type        = string
+}
 
-# variable "docker_hub_password" {
-#   description = "Your Docker Hub password"
-#   type        = string
-#   sensitive   = true
-# }
+variable "docker_hub_password" {
+  description = "Your Docker Hub password"
+  type        = string
+  sensitive   = true
+}
 
 
