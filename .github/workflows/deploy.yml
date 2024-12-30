@@ -1,12 +1,18 @@
-name: Terraform CI/CD
+name: Terraform CI/CD (Apply and Destroy)
 
 on:
   push:
     branches:
-      - eks-modules
-  pull_request:
-    branches:
-      - eks-modules
+      - main
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Choose the action to perform (apply/destroy)"
+        required: true
+        default: "apply"
+        options:
+          - apply
+          - destroy
 
 jobs:
   terraform:
@@ -18,10 +24,11 @@ jobs:
       TF_VERSION: "1.9.8" # Specify your desired Terraform version
 
     steps:
+      # Checkout GitHub repository
       - name: "Checkout GitHub repository"
-        uses: actions/checkout@v3 # Use latest version of checkout
+        uses: actions/checkout@v3
 
-      # Configure AWS credentials (using aws-actions/configure-aws-credentials@v2)
+      # Configure AWS credentials
       - name: "Configure AWS credentials"
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -29,12 +36,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # Verify AWS credentials are working (debugging step to ensure AWS access)
+      # Verify AWS credentials
       - name: "Verify AWS CLI"
-        run: |
-          aws sts get-caller-identity
+        run: aws sts get-caller-identity
 
-      # Set up Terraform with desired version (use hashicorp/setup-terraform@v1)
+      # Set up Terraform
       - name: "Set up Terraform"
         uses: hashicorp/setup-terraform@v1
         with:
@@ -44,19 +50,31 @@ jobs:
       - name: "Terraform Init"
         run: terraform init
 
-      # Format Terraform files (check for proper formatting)
-      # - name: 'Terraform Format'
-      #   run: terraform fmt -check
-
-      # Validate Terraform configuration
+      # Validate Terraform files
       - name: "Terraform Validate"
         run: terraform validate
 
-      # Plan Terraform change
-      - name: "Terraform Plan"
-        run: terraform plan -out=tfplan
+      # Choose between Apply or Destroy
+      - name: "Run Terraform Action"
+        env:
+          TF_VAR_docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          TF_VAR_docker_hub_password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+          # Capture the input action and ensure a default value
+          ACTION="${{ github.event.inputs.action || 'apply' }}"
 
-      # Apply Terraform changes (only on eks-modules branch)
-      - name: "Terraform Destroy"
-        if: github.ref == 'refs/heads/eks-modules'
-        run: terraform destroy -auto-approve
+          # Debugging: Show the action being run
+          echo "Action selected: $ACTION"
+
+          # Check the action and execute accordingly
+          if [[ "$ACTION" == "apply" ]]; then
+            echo "Running Terraform Apply..."
+            terraform plan -out=tfplan
+            terraform apply -auto-approve tfplan
+          elif [[ "$ACTION" == "destroy" ]]; then
+            echo "Running Terraform Destroy..."
+            terraform destroy -auto-approve
+          else
+            echo "Invalid action specified: $ACTION"
+            exit 1
+          fi
