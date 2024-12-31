@@ -17,6 +17,10 @@ variable "igw_id" {
   description = "Internet Gateway ID"
   type        = string
 }
+variable "ngw_id" {
+  description = "Internet Gateway ID "
+  type        = string
+}
 
 variable "environment" {
   description = "Environment (e.g., dev, prod)"

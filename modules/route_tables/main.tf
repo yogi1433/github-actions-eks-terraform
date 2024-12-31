@@ -22,9 +22,13 @@ resource "aws_route_table" "public" {
 
 resource "aws_route_table" "private" {
   vpc_id = var.vpc_id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = var.ngw_id
+  }
 
   tags = {
-    Name        = "Private Route Table"
+    Name        = "Private Route Table "
     Environment = var.environment
     Project     = var.project
     Owner       = var.owner

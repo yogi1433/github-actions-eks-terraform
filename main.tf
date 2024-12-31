@@ -32,6 +32,8 @@ module "eks_subnets" {
 module "eks_igw" {
   source      = "./modules/igw"
   vpc_id      = module.eks_vpc.vpc_id
+  public_subnet_ids = var.public_subnets
+  public_subnet_id = module.eks_subnets.public_subnets[0]
   environment = var.environment
   project     = var.project
   owner       = var.owner
@@ -44,6 +46,7 @@ module "eks_route_tables" {
   igw_id          = module.eks_igw.igw_id
   public_subnets  = module.eks_subnets.public_subnets
   private_subnets = module.eks_subnets.private_subnets
+  ngw_id = module.eks_igw.ngw_id
   #  public_route_table_id  = aws_route_table.public.id
   # private_route_table_id = aws_route_table.private.id
   environment = var.environment
@@ -102,7 +105,7 @@ module "eks_node_group" {
   cluster_name        = module.eks_cluster.cluster_name
   eks_node_group_name = var.eks_node_group_name
   node_role_arn       = var.node_role_arn
-  subnet_ids          = module.eks_subnets.public_subnets
+  subnet_ids          = module.eks_subnets.private_subnets
   key                 = var.key
   desired_size        = var.desired_size
   max_size            = var.max_size
@@ -117,24 +120,23 @@ module "eks_node_group" {
   }
 }
 
-##### docker related #######################
-module "docker_image" {
-  source           = "./modules/docker_image"
-  docker_image_name       = var.docker_image_name
-  docker_image_tag        = var.docker_image_tag
-  docker_file_path = var.docker_file_path
-  docker_hub_username = var.docker_hub_username
-  docker_hub_password = var.docker_hub_password
-}
+##### docker related  #######################
+# module "docker_image" {
+#   source           = "./modules/docker_image"
+#   docker_image_name       = var.docker_image_name
+#   docker_image_tag        = var.docker_image_tag
+#   docker_file_path = var.docker_file_path
+#   docker_hub_username = var.docker_hub_username
+#   docker_hub_password = var.docker_hub_password
+# }
 
-module "docker_push" {
-  source             = "./modules/docker_push"
-  docker_image_name         = module.docker_image.image_name
- # docker_image_name         = var.docker_image_name
-  docker_image_tag          = var.docker_image_tag
-  docker_hub_username = var.docker_hub_username
-  docker_hub_password = var.docker_hub_password
-}
+# module "docker_push" {
+#   source             = "./modules/docker_push"
+#   docker_image_name         = module.docker_image.image_name
+#   docker_image_tag          = var.docker_image_tag
+#   docker_hub_username = var.docker_hub_username
+#   docker_hub_password = var.docker_hub_password
+# }
 
 
 
